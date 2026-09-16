@@ -1,9 +1,15 @@
 import { loadReport } from "./generator/loader";
+import { generateScenario } from "./generator/aiClient";
 
-console.log(loadReport("fixtures/valid-bug.json"));
+async function main() {
+  const report = loadReport("fixtures/valid-bug.json");
+  console.log("Report carregado:", report);
 
-try {
-  loadReport("fixtures/invalid-bug.json");
-} catch (e) {
-  console.log("Erro esperado:", (e as Error).message);
+  const scenario = await generateScenario(report);
+  console.log("Cenário gerado pela IA:");
+  console.log(scenario);
 }
+
+main().catch((err) => {
+  console.error("Erro:", err.message);
+});
