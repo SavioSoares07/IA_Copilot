@@ -23,17 +23,31 @@ interface GeneratedCode {
   code: string;
 }
 
-async function callGemini(prompt: string): Promise<string> {
-  const response = await ai.models.generateContent({
-    model: "gemini-3.6-flash",
-    contents: prompt,
-  });
+export async function callGemini(prompt: string, retries = 3): Promise<string> {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const response = await ai.models.generateContent({
+        model: "gemini-3.6-flash",
+        contents: prompt,
+      });
 
-  if (!response.text) {
-    throw new Error("A resposta da IA não contém texto.");
+      if (!response.text) {
+        throw new Error("A resposta da IA não contém texto.");
+      }
+
+      return response.text;
+    } catch (err) {
+      const isLastAttempt = attempt === retries;
+      if (isLastAttempt) throw err;
+
+      console.log(
+        `Tentativa ${attempt} falhou, tentando de novo em ${attempt * 2}s...`,
+      );
+      await new Promise((resolve) => setTimeout(resolve, attempt * 2000));
+    }
   }
 
-  return response.text;
+  throw new Error("Não deveria chegar aqui");
 }
 
 function parseScenario(raw: string): GeneratedScenario {

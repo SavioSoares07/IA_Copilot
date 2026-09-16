@@ -1,6 +1,7 @@
 import { loadReport } from "./generator/loader";
 import { generateScenario, generateTestCode } from "./generator/aiClient";
 import { saveTestFile } from "./generator/fileWriter";
+import { healTest } from "./healer/healer";
 
 async function main() {
   const report = loadReport("fixtures/valid-bug.json");
@@ -12,4 +13,14 @@ async function main() {
   console.log("Teste salvo em:", savedPath);
 }
 
-main().catch((err) => console.error("Erro:", err.message));
+async function testHealer() {
+  const testFilePath = "tests/checkout-carrinho-vazio.spec.ts";
+  const errorContextPath =
+    "test-results/checkout-carrinho-vazio-Pr-a55a0-checkout-com-carrinho-vazio-chromium/error-context.md";
+
+  const result = await healTest(testFilePath, errorContextPath);
+  console.log("Diagnóstico:", result.suggestion.diagnosis);
+  console.log("Sugestão salva em:", result.savedPath);
+}
+
+testHealer().catch((err) => console.error("Erro:", err.message));

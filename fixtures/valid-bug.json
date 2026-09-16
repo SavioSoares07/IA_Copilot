@@ -1,1 +1,4 @@
-{ "kind": "bug", "description": "Checkout trava com carrinho vazio" }
+{
+  "kind": "bug",
+  "description": "No SauceDemo, após logar com standard_user, ir para a página de produtos (inventory.html), e sem adicionar nenhum item, tentar acessar o carrinho (cart.html) e finalizar a compra — o sistema deveria orientar o usuário de alguma forma, mas o comportamento atual não é claro"
+}
