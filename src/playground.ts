@@ -2,6 +2,7 @@ import { loadReport } from "./generator/loader";
 import { generateScenario, generateTestCode } from "./generator/aiClient";
 import { saveTestFile } from "./generator/fileWriter";
 import { healTest } from "./healer/healer";
+import { generateDashboard } from "./dashboard/generateHtml";
 
 async function main() {
   const report = loadReport("fixtures/valid-bug.json");
@@ -23,4 +24,9 @@ async function testHealer() {
   console.log("Sugestão salva em:", result.savedPath);
 }
 
-testHealer().catch((err) => console.error("Erro:", err.message));
+function testDashboard() {
+  const outputPath = generateDashboard();
+  console.log("Dashboard gerado em:", outputPath);
+}
+
+testDashboard();
