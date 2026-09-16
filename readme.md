@@ -112,4 +112,4 @@ O workflow em `.github/workflows/playwright.yml` roda os testes automaticamente 
 ## Autor
 
 Domingos Sávio Soares Nogueira — QA Analyst
-[LinkedIn](#https://www.linkedin.com/in/saviosoares07/) · [GitHub](#https://github.com/SavioSoares07)
+[LinkedIn](https://www.linkedin.com/in/saviosoares07/) · [GitHub](https://github.com/SavioSoares07)
