@@ -1,13 +1,13 @@
 # 🤖 AI QA Copilot
 
-Um framework de automação de testes que usa IA para **gerar** testes E2E a partir de requisitos ou relatos de bug, e para **diagnosticar e sugerir correções** quando esses testes falham — um ciclo de manutenção de testes assistido por IA, do zero à execução no CI.
+Um framework de automação de testes que usa IA para **gerar** testes E2E a partir de requisitos ou relatos de bug, e para **diagnosticar e sugerir correções** quando esses testes falham, um ciclo de manutenção de testes assistido por IA, do zero à execução no CI.
 
 ## O problema que isso resolve
 
 Em times de QA, dois problemas se repetem constantemente:
 
 1. **Bugs reportados raramente viram testes de regressão.** Ficam registrados num card do Jira, e o time confia na memória de "lembrar de testar aquilo de novo" depois do fix.
-2. **Testes E2E quebram com frequência por motivos triviais** — um seletor que mudou, uma rota que foi renomeada — e a manutenção consome tempo desproporcional ao valor que agrega.
+2. **Testes E2E quebram com frequência por motivos triviais** : um seletor que mudou, uma rota que foi renomeada — e a manutenção consome tempo desproporcional ao valor que agrega.
 
 O AI QA Copilot ataca os dois: transforma requisitos e bug reports em testes executáveis automaticamente, e usa IA para diagnosticar falhas reais de execução, sugerindo correções para revisão humana (nunca aplicação automática sem revisão).
 
@@ -36,7 +36,7 @@ Self-healing (IA) ──► Diagnóstico + correção sugerida ──► Revisã
 
 Durante o desenvolvimento, gerei um teste a partir do bug report _"ao tentar finalizar compra com carrinho vazio, o sistema deveria impedir ou avisar o usuário"_, testado contra o [SauceDemo](https://www.saucedemo.com) (aplicação pública de prática de automação).
 
-O teste gerado falhou — em chromium, firefox e webkit, confirmado no CI. O módulo de self-healing analisou o snapshot real da página no momento da falha e diagnosticou corretamente que **a premissa do teste estava errada**: a aplicação não implementa nenhuma validação de carrinho vazio, simplesmente prossegue para a etapa de checkout. A correção sugerida ajustou o teste para refletir o comportamento real da aplicação — validado, ao aplicá-la, pelo CI passando nos três navegadores.
+O teste gerado falhou, em chromium, firefox e webkit, confirmado no CI. O módulo de self-healing analisou o snapshot real da página no momento da falha e diagnosticou corretamente que **a premissa do teste estava errada**: a aplicação não implementa nenhuma validação de carrinho vazio, simplesmente prossegue para a etapa de checkout. A correção sugerida ajustou o teste para refletir o comportamento real da aplicação, validado, ao aplicá-la, pelo CI passando nos três navegadores.
 
 Esse ciclo completo (bug report → teste gerado → falha real → diagnóstico correto → correção aplicada → CI verde) é a prova de conceito central do projeto.
 
@@ -99,7 +99,7 @@ O workflow em `.github/workflows/playwright.yml` roda os testes automaticamente 
 
 ## Decisões de design
 
-- **IA nunca aplica correções automaticamente.** Toda sugestão de self-healing é registrada para revisão humana — uma escolha deliberada de segurança, não uma limitação técnica.
+- **IA nunca aplica correções automaticamente.** Toda sugestão de self-healing é registrada para revisão humana, uma escolha deliberada de segurança, não uma limitação técnica.
 - **Cada módulo (generator/healer) é independente do provedor de IA.** A chamada à API está isolada em uma única função (`callGemini`), permitindo trocar de provedor (testado também com a API da Anthropic) sem alterar o resto da lógica.
 - **`exactOptionalPropertyTypes` e `noUncheckedIndexedAccess` ativos no TypeScript**, forçando tratamento explícito de valores possivelmente ausentes em toda a base de código.
 
