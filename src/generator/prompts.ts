@@ -10,6 +10,16 @@ const OUTPUT_INSTRUCTIONS = `
         Não inclua markdown, comentários ou explicação fora do JSON.
 `;
 
+const CODE_OUTPUT_INSTRUCTIONS = `
+Responda APENAS com um bloco JSON válido, sem texto antes ou depois, no formato:
+
+{
+  "file_name": "nome-do-arquivo-em-kebab-case.spec.ts",
+  "code": "import { test, expect } from '@playwright/test';\\n\\ntest('...', async ({ page }) => {\\n  ...\\n});"
+}
+
+Não inclua markdown, comentários ou explicações fora do JSON.
+`;
 //Criação do prompt para gerar Requerimento
 
 function buildRequirementPrompt(description: string): string {
@@ -51,4 +61,19 @@ export function buildPrompt(report: Report): string {
     return buildBugPrompt(report.description);
   }
   return buildRequirementPrompt(report.description);
+}
+
+export function buildCodePrompt(gherkin: string): string {
+  return `
+Você é um engenheiro de QA sênior especializado em Playwright + TypeScript.
+
+Converta o cenário Gherkin abaixo em um teste Playwright completo e executável, usando a sintaxe test() do @playwright/test. Use seletores semânticos (getByRole, getByText, getByLabel) sempre que possível, em vez de seletores CSS frágeis.
+
+Gherkin:
+"""
+${gherkin}
+"""
+
+${CODE_OUTPUT_INSTRUCTIONS}
+`.trim();
 }

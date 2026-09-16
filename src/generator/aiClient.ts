@@ -1,7 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import * as dotenv from "dotenv";
 import { Report } from "../types";
-import { buildPrompt } from "./prompts";
+import { buildCodePrompt, buildPrompt } from "./prompts";
 
 dotenv.config();
 
@@ -16,6 +16,11 @@ const ai = new GoogleGenAI({ apiKey });
 interface GeneratedScenario {
   scenario_name: string;
   gherkin: string;
+}
+
+interface GeneratedCode {
+  file_name: string;
+  code: string;
 }
 
 async function callGemini(prompt: string): Promise<string> {
@@ -53,10 +58,39 @@ function parseScenario(raw: string): GeneratedScenario {
   return { scenario_name: obj.scenario_name, gherkin: obj.gherkin };
 }
 
+function parseCode(raw: string): GeneratedCode {
+  let cleaned = raw.trim();
+  cleaned = cleaned
+    .replace(/^```json\s*/, "")
+    .replace(/```$/, "")
+    .trim();
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(cleaned);
+  } catch {
+    throw new Error(`A resposta da IA não é um JSON válido:\n${raw}`);
+  }
+  const obj = parsed as Partial<GeneratedCode>;
+  if (!obj.file_name || !obj.code) {
+    throw new Error(`JSON da IA está faltando campos esperados:\n${raw}`);
+  }
+  return { file_name: obj.file_name, code: obj.code };
+}
+
+//Criação dos cenarios
 export async function generateScenario(
   report: Report,
 ): Promise<GeneratedScenario> {
   const prompt = buildPrompt(report);
   const raw = await callGemini(prompt);
   return parseScenario(raw);
+}
+
+export async function generateTestCode(
+  gherkin: string,
+): Promise<GeneratedCode> {
+  const prompt = buildCodePrompt(gherkin);
+  const raw = await callGemini(prompt);
+  return parseCode(raw);
 }
